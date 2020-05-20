@@ -2,14 +2,7 @@ FROM php:7.4-fpm-alpine AS app
 
 # Define config vars
 ENV APP_ENV=dev
-
-ENV SYS_NGINX_DIR=/etc/nginx \
-    SYS_PHP_DIR=/etc/php/7.4/ \
-    SUPERVISOR_CONFIG=docker-config/supervisord/supervisord.conf \
-    NGINX_CONFIG=docker-config/nginx/nginx.conf \
-    HOST_CONFIG=docker-config/nginx/conf.d/default.conf \
-    PHP_CONFIG=docker-config/php/${APP_ENV}.ini \
-    FPM_CONFIG=docker-config/php/fpm.conf
+ENV SYS_NGINX_DIR=/etc/nginx
 
 RUN apk update && apk add --no-cache --virtual .build-deps $PHPIZE_DEPS \
         curl \
@@ -56,6 +49,7 @@ RUN apk update && apk add --no-cache --virtual .build-deps $PHPIZE_DEPS \
 # Install composer
 COPY --from=composer /usr/bin/composer /usr/bin/composer
 
+# Copy source files to container
 COPY . /var/www/html
 WORKDIR /var/www/html
 
@@ -66,11 +60,13 @@ COPY docker-config/nginx/conf.d/default.conf ${SYS_NGINX_DIR}/conf.d/default.con
 COPY docker-config/php/${APP_ENV}.ini /usr/local/etc/php/php.ini
 COPY docker-config/php/fpm.conf /usr/local/etc/php-fpm.d/www.conf
 
-# Cleanup before start
+# Create dirs before start
 RUN mkdir /run/nginx && mkdir /run/supervisord
 
 WORKDIR /var/www/html/app
 
+# Use 80 port
 EXPOSE 80
 
+# Start supervisor
 ENTRYPOINT ["/usr/bin/supervisord", "--pidfile=/run/supervisord/supervisord.pid"]
