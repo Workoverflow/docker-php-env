@@ -1,0 +1,9 @@
+version: '2'
+services:
+    app:
+        build: .
+        restart: always
+        ports:
+            - "80:80"
+        volumes:
+            - ./app:/var/www/html/app
