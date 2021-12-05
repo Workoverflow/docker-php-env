@@ -1,7 +1,7 @@
 # Docker enviroment for PHP projects
 
-Docker container with NGINX + PHP 7.4-FPM
-Ready for Symfony 5
+Docker container with NGINX + PHP 8.1-FPM
+Ready for Symfony 6
 
 **How to use?**
 
