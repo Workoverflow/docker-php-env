@@ -1,4 +1,4 @@
-version: '3'
+version: '3.9'
 services:
     nginx:
         build:
@@ -28,3 +28,24 @@ services:
             - ./app:/var/www/app:delegated
         environment:
             - APP_ENV=dev
+        depends_on:
+            - mariadb
+    mariadb:
+        image: mariadb
+        restart: always
+        ports:
+            - "3306:3306"
+        volumes:
+            - ./storage/database/mariadb:/var/lib/mysql
+            - ./docker/config/mariadb:/etc/mysql/conf.d
+        environment:
+            MYSQL_ROOT_PASSWORD: root
+    adminer:
+        image: adminer
+        restart: always
+        links:
+            - db:mariadb
+        ports:
+            - 8080:8080
+        depends_on:
+            - db

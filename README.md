@@ -1,6 +1,6 @@
-# Docker enviroment for PHP projects
+# Docker environment for PHP projects
 
-Docker container with NGINX + PHP 8.1-FPM
+Docker container with NGINX + PHP 8.1-FPM + MariaDB (MySQL)
 Ready for Symfony 6 and Laravel 9
 
 **How to use?**
@@ -12,7 +12,6 @@ Ready for Symfony 6 and Laravel 9
     ```
     
 2. Use docker-compose or docker run
-
 
     ```bash
     docker compose build
@@ -54,3 +53,11 @@ Ready for Symfony 6 and Laravel 9
     ```
 
 7. Refresh http://localhost/
+
+
+9. Open http://localhost:8080 for manage database:
+   ```text
+     Server: mariadb
+     Login: root
+     Password: root
+   ```
