@@ -1,15 +1,12 @@
-FROM php:8.1-fpm-alpine AS app
+FROM php:8.1-fpm-alpine AS php
 
 # Define config vars
-ENV APP_ENV=dev
-ENV SYS_NGINX_DIR=/etc/nginx
+ARG APP_ENV=dev
 
 RUN apk update && apk add --no-cache --virtual .build-deps $PHPIZE_DEPS \
         curl \
         wget \
         git \
-        nginx \
-        supervisor \
         bzip2-dev \
         libxml2-dev \
         imagemagick-dev \
@@ -20,20 +17,18 @@ RUN apk update && apk add --no-cache --virtual .build-deps $PHPIZE_DEPS \
         libpng \
         libpng-dev \
         libmcrypt-dev \
-        zlib-dev \   
+        zlib-dev \
         libzip-dev \
         yaml-dev \
         tzdata \
         icu-dev \
         libpq-dev \
-    # && pecl install mcrypt-1.0.3 \ not available for 8.1 =(
-    && pecl install redis-5.3.4 \
-    && pecl install xdebug-3.1.2 \
+        libsodium-dev \
+    && pecl install redis \
+    && pecl install xdebug \
     && pecl install apcu \
-    && pecl install zip-1.20.0 \
-    && rm -rf /tmp/pear \
-    && rm -rf ${SYS_NGINX_DIR}/sites-enabled/* ${SYS_NGINX_DIR}/sites-available/* \
-    && mkdir -p /var/log/supervisor
+    && pecl install zip \
+    && rm -rf /tmp/pear
 
  RUN cp /usr/share/zoneinfo/Europe/Moscow /etc/localtime && echo "Europe/Moscow" > /etc/timezone \
     && apk del tzdata \
@@ -50,24 +45,11 @@ RUN apk update && apk add --no-cache --virtual .build-deps $PHPIZE_DEPS \
 # Install composer
 COPY --from=composer /usr/bin/composer /usr/bin/composer
 
-# Create dirs before start
-RUN mkdir /run/supervisord
-
 # Copy source files to container
-COPY . /var/www/html
-WORKDIR /var/www/html
+#COPY ./app /var/www
+WORKDIR /var/www
+RUN rm -rf /var/www/*
 
 # Copy configs
-COPY docker-config/supervisord/supervisord.conf /etc/supervisord.conf 
-COPY docker-config/nginx/nginx.conf /etc/nginx/nginx.conf 
-COPY docker-config/nginx/conf.d/default.conf ${SYS_NGINX_DIR}/conf.d/default.conf 
-COPY docker-config/php/${APP_ENV}.ini /usr/local/etc/php/php.ini
-COPY docker-config/php/fpm.conf /usr/local/etc/php-fpm.d/www.conf
-
-WORKDIR /var/www/html/app
-
-# Use 80 port
-EXPOSE 80
-
-# Start supervisor
-ENTRYPOINT ["/usr/bin/supervisord", "--pidfile=/run/supervisord/supervisord.pid"]
+ADD ./docker/config/php/${APP_ENV}.ini /usr/local/etc/php/conf.d/${APP_ENV}-custom.ini
+ADD ./docker/config/php/fpm.conf /usr/local/etc/php-fpm.d/www.conf

@@ -1,7 +1,7 @@
 # Docker enviroment for PHP projects
 
 Docker container with NGINX + PHP 8.1-FPM
-Ready for Symfony 6
+Ready for Symfony 6 and Laravel 9
 
 **How to use?**
 
@@ -15,8 +15,8 @@ Ready for Symfony 6
 
 
     ```bash
-    docker-compose build
-    docker-compose up -d
+    docker compose build
+    docker compose up -d
     ```
 
     OR
@@ -32,7 +32,7 @@ Ready for Symfony 6
 4. Attach to container
 
     ```bash
-    docker-compose exec app sh
+    docker compose exec php sh
     ```
 
     OR 
@@ -47,7 +47,7 @@ Ready for Symfony 6
     cd .. && rm -rf app
     ```
 
-6. Create new Symfony 5 project or use other framework
+6. Create new Symfony 6 project or use other framework
 
     ```bash
     composer create-project symfony/website-skeleton app
