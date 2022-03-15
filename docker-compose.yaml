@@ -44,8 +44,8 @@ services:
         image: adminer
         restart: always
         links:
-            - db:mariadb
+            - mariadb:mariadb
         ports:
             - 8080:8080
         depends_on:
-            - db
+            - mariadb
