@@ -10,26 +10,23 @@ Ready for Symfony 6 and Laravel 9
     ```bash
     git clone https://github.com/Workoverflow/docker-php-env.git
     ```
+   
+2. Edit *docker/config/env/dev.env* before build and run 
     
-2. Use docker-compose or docker run
-
+3. Use docker-compose or Make
 
     ```bash
-    docker compose build
-    docker compose up -d
+    docker-compose --env-file ./docker/config/env/dev.env build
+    docker-compose --env-file ./docker/config/env/dev.env up -d
     ```
-
-    OR
 
     ```bash
-    docker build -t php-app:latest .
-    docker run -d -p 80:80 --name=php_app php-app:latest
+    make build.dev run.dev
     ```
 
-3. Check php info in your browser. Visit http://localhost/
-    
+4. Check php info in your browser. Visit http://localhost/ 
 
-4. Attach to container
+5. Attach to container
 
     ```bash
     docker compose exec php sh
@@ -41,16 +38,18 @@ Ready for Symfony 6 and Laravel 9
     doocker exec -it php_app /bin/sh
     ```
 
-5. Remove default *app* folder
+6. Remove default *app* folder
     
     ```bash 
     cd .. && rm -rf app
     ```
 
-6. Create new Symfony 6 project or use other framework
+7. Create new Symfony 6 project or use other framework
 
     ```bash
     composer create-project symfony/website-skeleton app
     ```
 
-7. Refresh http://localhost/
+8. Refresh http://localhost/
+
+9. Use http://localhost:8080/ to manage database
